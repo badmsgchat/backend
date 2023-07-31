@@ -44,7 +44,11 @@ app.post('/messages/delete', async (req, res) => {
         res.sendStatus(500);
       } else {
         res.sendStatus(200);
-        io.to(ownerof.msg.room_id||ownerof.room.id).emit("event", {type: "delete", id});
+
+        var roomid = ownerof.msg ? ownerof.msg.room_id : ownerof.room ? ownerof.room.id : undefined;
+        if (roomid !== undefined) {
+          io.to(roomid).emit("event", {type: "delete", id});
+        }
       }
     });
   } else {
