@@ -3,6 +3,10 @@ const httpa = require('http'),
       url = require('url');
 
 app.get('/api/proxyhs', (req, res) =>{
+    if (!req.session.username) {
+        return res.sendStatus(401);
+    }
+
     try {
         var target = req.query.u;
         var opt = url.parse(target);

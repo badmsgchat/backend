@@ -13,9 +13,9 @@ var conf = require('./config'),
     bcrypt = require('bcrypt');
 
 // [ircmp] src/init.js
-// [ircmp] src/api/messages.js
 // [ircmp] src/api/rooms.js
 // [ircmp] src/api/pwdchange.js
+// [ircmp] src/api/messages/basic.js
 // [ircmp] src/routes/login.js
 // [ircmp] src/routes/proxy.js
 // [ircmp] frontend/front.js

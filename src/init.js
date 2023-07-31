@@ -17,6 +17,7 @@ var db = new sqlite3.Database("platform.db", (err) => {
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS messages (
+    id TEXT PRIMARY KEY NOT NULL UNIQUE,
     name TEXT NOT NULL,
     message TEXT NOT NULL,
     pfpuri TEXT NOT NULL,
@@ -28,39 +29,50 @@ db.serialize(() => {
     password TEXT NOT NULL
   )`);
   db.run(`CREATE TABLE IF NOT EXISTS rooms (
-    id TEXT PRIMARY KEY NOT NULL,
+    id TEXT PRIMARY KEY NOT NULL UNIQUE,
     name TEXT,
     creator TEXT NOT NULL,
     meta TEXT
   )`);
 });
 
-// functions (random id, validating rooms)
-function randId(length){
-  const string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  var rand = crypto.randomBytes(length);
-  var res = new Array(length);
-
-  for (let i=0;i<length;i++){
-    res[i] = string[rand[i] % string.length]
-  }
-  return res.join('');
+// functions (random ids, validating rooms)
+function validateRoom(roomid){
+  return new Promise((resolve, reject) => {
+    db.get('SELECT * FROM rooms WHERE id = ?', [roomid], (err, row)=>{
+      if (err){
+        console.error(err.message);
+        reject(err);
+      } else if (row) {
+        resolve({exists: true, name: row.name, creator: row.creator});
+      } else {
+        resolve(false);
+      }
+    })
+  });
 }
 
-function validateRoom(roomid){
-    return new Promise((resolve, reject) => {
-      db.get('SELECT * FROM rooms WHERE id = ?', [roomid], (err, row)=>{
-        if (err){
-          console.error(err.message);
-          reject(err);
-        } else if (row) {
-          resolve({exists: true, name: row.name, creator: row.creator});
-        } else {
-          resolve(false);
-        }
-      })
-    });
+const random = {
+  strId: function(length) {
+    // used for rooms
+
+    const string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    var rand = crypto.randomBytes(length);
+    var res = new Array(length);
+  
+    for (let i=0;i<length;i++){
+      res[i] = string[rand[i] % string.length]
+    }
+    return res.join('');
+  },
+  msgId: function(roomid) {
+    // used for messages
+
+    var nums = crypto.randomBytes(4);
+    return roomid + (nums[0] * nums[1] * nums[2] * nums[3]);
   }
+}
+
 
 // logout route to destroy session
 app.post('/api/logout', (req, res) => {
@@ -71,3 +83,10 @@ app.post('/api/logout', (req, res) => {
     res.status(200).json({success: true});
   });
 });
+
+// io join event (for rooms)
+io.on('connection', (sock) => {
+  sock.on('join', ({roomid}) => {
+    sock.join(roomid);
+  });
+})
