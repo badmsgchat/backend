@@ -2,14 +2,16 @@
 a simple, small size, room based messaging platform written in nodejs, express and socket.io.
 
 ## setup
-### the new way
-you can now use [the deploy script here](https://github.com/badmsgchat/deploy#readme) for linux systems.
+### deploy script
+we recommend using [the deploy script here](https://github.com/badmsgchat/deploy#readme) for linux systems.
 
-### the old way
+
+### manually
+***the instructions below will stop being updated soon.***<br>
 modules are ~30MB so you can host this on a raspberry pi or anything.
 ```sh
 git clone https://github.com/badmsgchat/backend && cd backend
-git submodule update --init --recursive
+git clone https://github.com/badmsgchat/frontend
 npm i
 node ./frontend/rebuild.js
 ```
