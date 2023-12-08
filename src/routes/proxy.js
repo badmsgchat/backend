@@ -1,7 +1,4 @@
-const httpa = require('http'),
-      https = require('https'),
-      url = require('url');
-
+// proxy thing
 app.get('/api/proxyhs', (req, res) =>{
     if (!req.session.username) {
         return res.sendStatus(401);
@@ -9,8 +6,8 @@ app.get('/api/proxyhs', (req, res) =>{
 
     try {
         var target = req.query.u;
-        var opt = url.parse(target);
-        var client = opt.protocol === "https:" ? https : httpa;
+        var opt = new URL(target);
+        var client = opt.protocol === "https:" ? require('https') : require('http');
 
         var request = client.request(opt, (pres) => {
             var ctype = pres.headers['content-type'];

@@ -48,23 +48,24 @@ app.post('/messages', async (req, res) => {
 
   const name = req.session.username;
   const { message, pfpuri, room_id } = req.body;
-  var sant = htmlsant(message, {allowedTags: ['img','video','code'], allowedAttributes: []});
+  const msgid = random.msgId(room_id),
+        timestamp = Math.floor(Date.now() / 1000);
 
-  var created_at = Math.floor(Date.now() / 1000);
-  var msgid = random.msgId(room_id);
 
-  var validated = await validateRoom(room_id);
-  if (validated.exists) {
-    if (/^\s*$/.test(sant)) {
-      return res.status(500).send({err: "Whitespace found, not sending."});
+  var room = await validateRoom(room_id);
+  if (room.exists) {
+    if (/^\s*$/.test(message)) {
+      return res.status(500).send({err: "empty msg"});
     }
 
-    db.run('INSERT INTO messages (id, name, message, pfpuri, room_id, created_at) VALUES (?, ?, ?, ?, ?, ?)', [msgid, name, sant, pfpuri, room_id, created_at], (err) => {
+    db.run('INSERT INTO messages (id, name, message, pfpuri, room_id, created_at) VALUES (?, ?, ?, ?, ?, ?)', [msgid, name, message.trim(), pfpuri, room_id, timestamp], (err) => {
       if (err) {
         console.error(err.message);
         res.sendStatus(500);
       } else {
-        io.to(room_id).emit("message", {id: msgid, name, message: sant, pfpuri, created_at});
+        wss.bc(room_id, {ev: "msg", id: msgid, 
+                         name, message: message.trim(), pfpuri, 
+                         created_at: timestamp});
         res.sendStatus(200);
       }
     });

@@ -47,7 +47,7 @@ app.post('/messages/delete', async (req, res) => {
 
         var roomid = ownerof.msg ? ownerof.msg.room_id : ownerof.room ? ownerof.room.id : undefined;
         if (roomid !== undefined) {
-          io.to(roomid).emit("event", {type: "delete", id});
+          wss.bc(roomid, {ev: "rm", id});
         }
       }
     });

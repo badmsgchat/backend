@@ -84,9 +84,36 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
-// io join event (for rooms)
-io.on('connection', (sock) => {
-  sock.on('join', ({roomid}) => {
-    sock.join(roomid);
+
+// ws setup
+wss.conn = {};
+wss.on('connection', (ws) => {
+  ws.on('message', (msg) => {
+    msg = JSON.parse(msg);
+
+    // room join event
+    if (msg && msg.e === 'j') {
+      ws.room = msg.room;
+
+      if (!wss.conn[msg.room]) wss.conn[msg.room] = [];
+      wss.conn[msg.room].push(ws);
+    }
   });
-})
+
+  ws.on('close', ()=>{
+    for (const id in wss.conn) {
+      wss.conn[id] = wss.conn[id].filter((c) => c !== ws);
+    }
+  })
+});
+
+// broadcast to room
+wss.bc = (room, data) => {
+  if (wss.conn[room]) {
+    wss.conn[room].forEach((c) => {
+      if (c.readyState === websocket.OPEN) {
+        c.send(JSON.stringify(data));
+      }
+    });
+  }
+}

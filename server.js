@@ -1,16 +1,17 @@
-var express = require('express'),
-    app = express(),
-    bodyParser = require('body-parser'),
+const express = require('express'),
     session = require('express-session'),
-    htmlsant = require('sanitize-html');
+    app = express(),
+    bodyParser = require('body-parser');
 
-var http = require('http').Server(app),
-    io = require('socket.io')(http),
-    sqlite3 = require('sqlite3').verbose();
+const http = require('http').Server(app),
+      websocket = require('ws'),
+      wss = new websocket.Server({server: http});
 
-var conf = require('./config'),
+  
+const conf = require('./config'),
     crypto = require('crypto'),
-    bcrypt = require('bcrypt');
+    bcrypt = require('bcrypt'),
+    sqlite3 = require('sqlite3').verbose();
 
 // [ircmp] src/init.js
 // [ircmp] src/api/rooms.js
@@ -20,6 +21,6 @@ var conf = require('./config'),
 // [ircmp] src/routes/proxy.js
 // [ircmp] frontend/front.js
 
-var server = http.listen(conf.PORT, () => {
-  console.log('server is listening on port', server.address().port);
+http.listen(conf.PORT, () => {
+  console.log('server is listening on port', conf.PORT);
 });
