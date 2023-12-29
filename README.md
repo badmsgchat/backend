@@ -1,32 +1,14 @@
+## REWRITE
+This backend was recently rewritten. The documentation is still a WIP, but will be updated later.
 # badmsgplatform ![repo size](https://img.shields.io/github/repo-size/badmsgchat/backend)
-a simple, small size, room based messaging platform written in nodejs, express and socket.io.
+a simple, small size, room based messaging platform powered by express, redis and ws.
 
 ## setup
 ### deploy script
-we recommend using [the deploy script here](https://github.com/badmsgchat/deploy#readme) for linux systems.
+i recommend using the deploy script from the [/deploy](https://github.com/badmsgchat/deploy#readme) repository.
+### manual
+WIP
 
-
-### manually
-***the instructions below will stop being updated soon.***<br>
-modules are ~30MB so you can host this on a raspberry pi or anything.
-```sh
-git clone https://github.com/badmsgchat/backend && cd backend
-git clone https://github.com/badmsgchat/frontend
-npm i
-node ./frontend/rebuild.js
-```
-**↓↓↓**
-### setting up the config
-assuming you've cloned this repo, you have to create a configuration file first. 
-
-create a file name `config.js`, and copy paste the content below. i'd recommend changing the key
-```js
-module.exports = {
-    PORT: 80, // or process.env.PORT
-    SECRETKEY: "whateveryouwant"
-}
-```
-after this you're good to go! to start, run `npm start`
 
 ## license
-badmsgplatform is licensed under apache license 2.0
+badmsgplatform is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)

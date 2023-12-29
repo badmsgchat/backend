@@ -1,31 +1,27 @@
 {
   "name": "backend",
-  "version": "0.4.3",
   "description": "badmsgplatform's backend",
-  "main": "build.js",
+  "version": "0.3",
+  "private": true,
+  "main": "index.js",
   "scripts": {
-    "compile": "node ./scripts/ircmp.js server.js build.js",
-    "start": "npm run compile && node ."
+    "start": "node ."
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "express": "^4.18.2",
-    "express-session": "^1.17.3",
-    "ws": "^8.14.2",
-    "sqlite3": "^5.1.6",
-    
-    "ejs": "^3.1.9",
-    "uglify-js": "^3.17.4"
+    "jsonwebtoken": "^9.0.2",
+    "redis": "^4.6.12",
+    "ws": "^8.15.1"
   },
   "author": "woofledev",
   "license": "Apache-2.0",
-  
+  "homepage": "https://github.com/badmsgchat/backend#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/badmsgchat/backend.git"
   },
   "bugs": {
     "url": "https://github.com/badmsgchat/backend/issues"
-  },
-  "homepage": "https://github.com/badmsgchat/backend#readme"
+  }
 }
