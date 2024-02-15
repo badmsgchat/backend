@@ -10,14 +10,14 @@ module.exports = {
   path: "/api/rooms",
   routes: ({ auth, db }) => {
     /**
-     * @function /api/rooms/new POST
+     * @function /api/rooms/ POST
      * @memberof Rooms
      * @description creates a new room
      * @param {string} name name of the room
      * @returns {object} { roomid, name, creator }
      * @throws {status} 400/500
      */
-    router.post("/new", [auth], async (req, res)=>{
+    router.post("/", [auth], async (req, res)=>{
       const name = req.body.name;
       const creator = req.user.username;
       const roomid = randId();
