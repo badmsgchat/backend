@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 */
 module.exports = {
   path: "/api/change",
-  routes: (auth, db) => {
+  routes: ({ auth, db }) => {
     /**
      * @function /api/change/pass POST
      * @memberof Auth

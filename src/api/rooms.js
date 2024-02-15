@@ -8,7 +8,7 @@ const { randId, validateRoom } = require("../utils");
  */
 module.exports = {
   path: "/api/rooms",
-  routes: (auth, db) => {
+  routes: ({ auth, db }) => {
     /**
      * @function /api/rooms/new POST
      * @memberof Rooms
@@ -18,13 +18,13 @@ module.exports = {
      * @throws {status} 400/500
      */
     router.post("/new", [auth], async (req, res)=>{
+      const name = req.body.name;
       const creator = req.user.username;
       const roomid = randId();
-      const { name } = req.body;
       if (!name) return res.sendStatus(400);
 
       try {
-        await db.set(`rooms:${roomid}`, JSON.stringify({name, creator}));
+        await db.set(`rooms:${roomid}`, JSON.stringify({ name, creator, meta: [{}, {}] }));
         res.json({ roomid, name, creator });
       } catch (e) {
         res.sendStatus(500);
@@ -44,6 +44,7 @@ module.exports = {
       const { roomId } = req.params;
       const room = await validateRoom(db, roomId);
       if (room) {
+        if (req.user.username !== room.creator) delete room.private;  // delete private meta if user isnt room owner.
         res.json({ ...room });
       } else {
         res.status(404).json({err: "Room doesn't exist"});

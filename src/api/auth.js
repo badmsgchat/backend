@@ -6,12 +6,12 @@ const {SECRET} = require('../../config');
 
 
 /**
- * The Authentication API (login, register, logout)
+ * The Authentication API (login, register)
  * @namespace Auth
  */
 module.exports = {
   path: "/api",
-  routes: (auth, db) => {
+  routes: ({ db }) => {
     const sendErr = (res, code, msg) => res.status(code).json({err: msg});
 
     /**

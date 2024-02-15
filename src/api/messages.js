@@ -9,7 +9,7 @@ const { randId, validateRoom } = require('../utils');
  */
 module.exports = {
   path: "/api/messages",
-  routes: (auth, db, wss) => {
+  routes: ({ auth, db, wss }) => {
     const sendErr = (res, code, msg) => res.status(code).json({err: msg});
 
     /**
@@ -33,9 +33,9 @@ module.exports = {
         
         const fmt = await Promise.all(
           messages.map(async (entry) => {
-            const { id, name, msg, pfpuri } = JSON.parse(entry.value);
+            const { id, name, msg } = JSON.parse(entry.value);
             return { id, stamp: entry.score,
-                    name, msg, pfpuri };
+                    name, msg };
           })
         );
 
@@ -54,12 +54,11 @@ module.exports = {
      * @description send a message to a room
      * @param {string} roomId The room ID
      * @param {string} msg message content
-     * @param {string} [pfpuri] users profile picture URL
      * @returns {object} {name: (your username), id: (message id), stamp: (unix time)}
      * @throws {object} JSON object with a error message (in err)
      */
     router.post('/', [auth], async (req, res)=>{
-      let { msg, pfpuri, roomId } = req.body;
+      let { msg, roomId } = req.body;
       const name = req.user.username;
       const msgId = randId(6);
       const stamp = Math.floor(Date.now() / 1000);
@@ -74,8 +73,7 @@ module.exports = {
       try {
         await db.zAdd(`messages:${roomId}`, {
           score: stamp,
-          value: JSON.stringify({ id: msgId, 
-                  name, msg, pfpuri: pfpuri || "" })
+          value: JSON.stringify({ id: msgId, name, msg })
         });
       } catch (e) {
         // console.log(e);
@@ -83,7 +81,7 @@ module.exports = {
       }
 
       wss.bc(roomId, {ev: `${roomId}:msg`, id: msgId, 
-                      name, msg, pfpuri, stamp });
+                      name, msg, stamp });
       res.json({ id: msgId, name, stamp });
     });
 

@@ -10,7 +10,9 @@ module.exports = {
       const data = JSON.parse(dataStr);
       return {
         name: data.name,
-        creator: data.creator
+        creator: data.creator,
+        meta: data.meta[0], // public
+        private: data.meta[1]
       };
     } catch (e) {
       throw e;
